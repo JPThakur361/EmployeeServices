@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection.Emit;
+using System.Threading;
 using System.Web.Http;
 using EmployeeDataAccess;
 
@@ -12,12 +13,13 @@ namespace EmployeeDetails.Controllers
     
     public class EmployeesController : ApiController
     {
-
-        public HttpResponseMessage Get(string gender)
+        [BasicAuthentication] 
+        public HttpResponseMessage Get()
         {
+             string username =  Thread.CurrentPrincipal.Identity.Name;
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
-                switch(gender.ToLower())
+                switch(username.ToLower())
                 {
                     case "all":
                         return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.ToList());
@@ -26,7 +28,7 @@ namespace EmployeeDetails.Controllers
                     case "female":
                         return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e => e.Gender.ToLower()== "female") .ToList());
                     default:
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "NO such employee exist for the gender");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
 
             }

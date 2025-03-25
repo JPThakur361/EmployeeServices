@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace EmployeeDetails
 
@@ -37,6 +38,11 @@ namespace EmployeeDetails
                 defaults: new { id = RouteParameter.Optional }
             );
             config.Formatters.Add(new CustomJsonFormatter());
+
+            EnableCorsAttribute cors = new EnableCorsAttribute("*","*","*") ;
+            config.EnableCors(cors);
+            config.Filters.Add(new RequireHttpAttributes());
+
         }
     }
 }
